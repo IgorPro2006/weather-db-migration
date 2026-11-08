@@ -43,3 +43,17 @@ def import_csv(path, db="postgres"):
         repository.add_all(session, batch)
         total += len(batch)
     print(f"Імпортовано записів: {total}")
+
+
+def search(country, day, city=None, db="postgres"):
+    with Session(get_engine(db)) as session:
+        records = repository.find_weather(session, country, day, city)
+        if not records:
+            print("Нічого не знайдено.")
+        for weather in records:
+            print("=" * 40)
+            for column in Weather.__table__.columns:
+                print(f"{column.name:20} {getattr(weather, column.name)}")
+            for column in Astronomy.__table__.columns:
+                if column.name not in ("id", "weather_id"):
+                    print(f"{column.name:20} {getattr(weather.astronomy, column.name)}")

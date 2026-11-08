@@ -14,4 +14,6 @@ Python + SQLAlchemy (ORM) + Alembic (міграції) + PostgreSQL / MySQL.
 ```
 alembic upgrade head
 python main.py import data/GlobalWeatherRepository.csv
+python main.py search Ukraine 2024-05-16
+python main.py search Ukraine 2024-05-16 Kyiv
 ```
