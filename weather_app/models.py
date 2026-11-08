@@ -1,6 +1,7 @@
 # ORM-модель: опис таблиць БД у вигляді Python-класів.
 # Етап 2: дані про схід-захід небесних тіл винесено в окрему таблицю astronomy.
-from sqlalchemy import Column, DateTime, Double, Enum, ForeignKey, Integer, String, Time
+# Етап 3: додано колонку go_outside.
+from sqlalchemy import Boolean, Column, DateTime, Double, Enum, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -39,5 +40,6 @@ class Astronomy(Base):
     moonset = Column(Time)
     moon_phase = Column(String(20))
     moon_illumination = Column(Integer)
+    go_outside = Column(Boolean, nullable=False)           # "Чи варто виходити на вулицю"
 
     weather = relationship("Weather", back_populates="astronomy")
