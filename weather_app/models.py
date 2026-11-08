@@ -1,0 +1,32 @@
+# ORM-модель: опис таблиць БД у вигляді Python-класів.
+# Етап 1: усі вибрані колонки в одній таблиці weather.
+from sqlalchemy import Column, DateTime, Double, Enum, Integer, String, Time
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+WIND_DIRECTIONS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                   "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+
+
+class Weather(Base):
+    __tablename__ = "weather"
+
+    id = Column(Integer, primary_key=True)
+    country = Column(String(100), nullable=False)          # текст
+    location_name = Column(String(100), nullable=False)
+    last_updated = Column(DateTime, nullable=False)        # дата (і час)
+    temperature_celsius = Column(Double)
+    condition_text = Column(String(100))
+    humidity = Column(Integer)
+    wind_kph = Column(Double)                              # дробове число
+    wind_degree = Column(Integer)                          # ціле число
+    wind_direction = Column(Enum(*WIND_DIRECTIONS, name="wind_direction_enum"))  # enum
+
+    # категорія варіанту 16: схід-захід небесних тіл
+    sunrise = Column(Time)                                 # час
+    sunset = Column(Time)
+    moonrise = Column(Time)
+    moonset = Column(Time)
+    moon_phase = Column(String(20))
+    moon_illumination = Column(Integer)
