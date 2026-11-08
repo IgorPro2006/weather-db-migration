@@ -1,5 +1,5 @@
 # Рівень запитів до БД: тільки тут звертаємося до таблиць.
-from sqlalchemy import Date, cast, func, select
+from sqlalchemy import Date, cast, func, insert, select
 
 from weather_app.models import Weather
 
@@ -20,3 +20,12 @@ def find_weather(session, country, day, city=None):
     if city:
         query = query.where(func.lower(Weather.location_name) == city.lower())
     return session.scalars(query.order_by(Weather.location_name)).all()
+
+
+def get_rows(session, table):
+    return session.execute(select(table).order_by(table.c.id)).all()
+
+
+def insert_rows(session, table, rows):
+    if rows:
+        session.execute(insert(table), [row._asdict() for row in rows])

@@ -57,3 +57,20 @@ def search(country, day, city=None, db="postgres"):
             for column in Astronomy.__table__.columns:
                 if column.name not in ("id", "weather_id"):
                     print(f"{column.name:20} {getattr(weather.astronomy, column.name)}")
+
+
+def copy_to_mysql():
+    """Копіює всі дані з Postgres у MySQL (схему в MySQL створюють ті самі міграції)."""
+    tables = [Weather.__table__, Astronomy.__table__]
+    with Session(get_engine("postgres")) as source, Session(get_engine("mysql")) as target:
+        if repository.count_weather(target) > 0:
+            print("У MySQL вже є дані.")
+            return
+        for table in tables:
+            rows = repository.get_rows(source, table)
+            repository.insert_rows(target, table, rows)
+            print(f"{table.name}: скопійовано {len(rows)} рядків")
+        target.commit()
+
+        same = all(repository.get_rows(source, t) == repository.get_rows(target, t) for t in tables)
+        print("Бази однакові." if same else "Бази відрізняються!")

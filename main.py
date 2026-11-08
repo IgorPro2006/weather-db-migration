@@ -2,6 +2,7 @@
 #   python main.py import data/GlobalWeatherRepository.csv
 #   python main.py search Ukraine 2024-05-16
 #   python main.py search Ukraine 2024-05-16 Kyiv
+#   python main.py copy
 import sys
 from datetime import date
 
@@ -14,7 +15,10 @@ if len(args) == 2 and args[0] == "import":
 elif len(args) in (3, 4) and args[0] == "search":
     city = args[3] if len(args) == 4 else None
     services.search(args[1], date.fromisoformat(args[2]), city)
+elif args == ["copy"]:
+    services.copy_to_mysql()
 else:
     print("Використання:")
     print("  python main.py import <файл.csv>")
     print("  python main.py search <країна> <РРРР-ММ-ДД> [місто]")
+    print("  python main.py copy            (Postgres -> MySQL)")
