@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from weather_app import repository
 from weather_app.csv_reader import read_rows
 from weather_app.database import get_engine
-from weather_app.models import Weather
+from weather_app.models import Astronomy, Weather
 
 
 def import_csv(path, db="postgres"):
@@ -15,7 +15,15 @@ def import_csv(path, db="postgres"):
         batch = []
         total = 0
         for row in read_rows(path):
-            batch.append(Weather(**row))
+            astronomy = Astronomy(
+                sunrise=row.pop("sunrise"),
+                sunset=row.pop("sunset"),
+                moonrise=row.pop("moonrise"),
+                moonset=row.pop("moonset"),
+                moon_phase=row.pop("moon_phase"),
+                moon_illumination=row.pop("moon_illumination"),
+            )
+            batch.append(Weather(**row, astronomy=astronomy))
             if len(batch) == 5000:          # зберігаємо частинами, щоб не забивати пам'ять
                 repository.add_all(session, batch)
                 total += len(batch)

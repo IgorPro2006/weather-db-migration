@@ -1,7 +1,7 @@
 # ORM-модель: опис таблиць БД у вигляді Python-класів.
-# Етап 1: усі вибрані колонки в одній таблиці weather.
-from sqlalchemy import Column, DateTime, Double, Enum, Integer, String, Time
-from sqlalchemy.orm import declarative_base
+# Етап 2: дані про схід-захід небесних тіл винесено в окрему таблицю astronomy.
+from sqlalchemy import Column, DateTime, Double, Enum, ForeignKey, Integer, String, Time
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
@@ -23,10 +23,21 @@ class Weather(Base):
     wind_degree = Column(Integer)                          # ціле число
     wind_direction = Column(Enum(*WIND_DIRECTIONS, name="wind_direction_enum"))  # enum
 
-    # категорія варіанту 16: схід-захід небесних тіл
+    # один запис weather <-> один запис astronomy
+    astronomy = relationship("Astronomy", uselist=False, back_populates="weather")
+
+
+class Astronomy(Base):
+    """Категорія варіанту 16: схід-захід небесних тіл."""
+    __tablename__ = "astronomy"
+
+    id = Column(Integer, primary_key=True)
+    weather_id = Column(Integer, ForeignKey("weather.id"), nullable=False, unique=True)
     sunrise = Column(Time)                                 # час
     sunset = Column(Time)
     moonrise = Column(Time)
     moonset = Column(Time)
     moon_phase = Column(String(20))
     moon_illumination = Column(Integer)
+
+    weather = relationship("Weather", back_populates="astronomy")
